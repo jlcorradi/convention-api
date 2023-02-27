@@ -42,7 +42,7 @@ class CachingConventionServiceTest {
     }
 
     @Test
-    void startSession_success() throws InterruptedException {
+    void startSession_success() {
         // GIVEN
         Convention convention = conventionRepository.save(DummyObjectProvider.convention());
         CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
@@ -59,7 +59,7 @@ class CachingConventionServiceTest {
     }
 
     @Test
-    void closeSession() throws SessionClosedException {
+    void closeSession_success() throws SessionClosedException {
         // GIVEN
         Convention convention = conventionRepository.save(DummyObjectProvider.convention());
         CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
@@ -76,7 +76,7 @@ class CachingConventionServiceTest {
     }
 
     @Test
-    void startupSessionsCheck() throws SessionClosedException {
+    void startupSessionsCheck_closesSessions() throws SessionClosedException {
         // GIVEN
         Convention convention = conventionRepository.save(DummyObjectProvider.convention());
         ConventionSession session = ConventionSession.builder()
