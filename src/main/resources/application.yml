@@ -1,0 +1,12 @@
+spring:
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+  jpa:
+    show-sql: ${SPRING_JPA_SHOW_SQL}
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}

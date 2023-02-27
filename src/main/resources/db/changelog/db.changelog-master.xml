@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet id="0" author="jlcorradi">
+        <createTable tableName="convention">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="voter">
+            <column name="id" type="VARCHAR(20)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="convention_session">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="convention_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="duration_minutes" type="INT" defaultValueNumeric="1"/>
+            <column name="start_datetime" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_datetime" type="DATETIME"/>
+            <column name="votes_pro" type="BIGINT"/>
+            <column name="votes_con" type="BIGINT"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="convention_session" baseColumnNames="convention_id"
+                                 constraintName="fk_convention_session_convention"
+                                 referencedTableName="convention"
+                                 referencedColumnNames="id"/>
+
+        <createTable tableName="vote_poll">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="convention_session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="voter_id" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vote" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="vote_poll" baseColumnNames="convention_session_id"
+                                 constraintName="fk_vote_poll_convention_session"
+                                 referencedTableName="convention_session"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="vote_poll" baseColumnNames="voter_id"
+                                 constraintName="fk_vote_poll_voter"
+                                 referencedTableName="voter"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+
+</databaseChangeLog>
