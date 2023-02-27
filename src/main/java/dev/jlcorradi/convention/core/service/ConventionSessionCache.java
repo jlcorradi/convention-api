@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
+/***
+ * The idea behind this class is to have a cache to store the active sessions to avoid DB overhead to look for
+ * active sessions.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Component

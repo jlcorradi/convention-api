@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/***
+ * The idea behind this entity is that multiple Sessions can be created for a specific
+ * convention. Not required for the current assignment, but I decided to go with it for future proof.
+ */
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

@@ -7,7 +7,6 @@ import lombok.Data;
 @Builder
 @Data
 public class CreateConventionSessionDTO {
-
     private Convention convention;
     private Integer durationInMinutes;
 

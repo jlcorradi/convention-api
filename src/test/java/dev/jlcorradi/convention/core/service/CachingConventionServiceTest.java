@@ -12,6 +12,7 @@ import dev.jlcorradi.convention.core.repository.ConventionRepository;
 import dev.jlcorradi.convention.core.repository.ConventionSessionRepository;
 import dev.jlcorradi.convention.core.repository.VoterRepository;
 import dev.jlcorradi.convention.utils.DummyObjectProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@Slf4j
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 class CachingConventionServiceTest {
@@ -124,6 +126,7 @@ class CachingConventionServiceTest {
                 .build());
 
         // WHEN
+        log.info("Waiting for the session to end...");
         Thread.sleep(2000 * 60);
 
         // THEN
