@@ -21,9 +21,8 @@ public class ConventionSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "convention_id", nullable = false)
-    private Convention convention;
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "duration_minutes", nullable = false)
     private int durationMinutes = 1;

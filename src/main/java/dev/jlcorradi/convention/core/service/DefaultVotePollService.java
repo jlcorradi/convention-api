@@ -38,7 +38,7 @@ public class DefaultVotePollService implements VotePollService {
         VotePoll votePoll = VotePoll.builder()
                 .voter(voter)
                 .conventionSession(activeSession)
-                .vote(registerVoteDTO.isVote())
+                .vote(registerVoteDTO.getVote())
                 .build();
         votePollRepository.save(votePoll);
     }

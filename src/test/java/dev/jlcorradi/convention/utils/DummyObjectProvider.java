@@ -1,6 +1,5 @@
 package dev.jlcorradi.convention.utils;
 
-import dev.jlcorradi.convention.core.model.Convention;
 import dev.jlcorradi.convention.core.model.ConventionSession;
 import dev.jlcorradi.convention.core.model.Voter;
 import lombok.AccessLevel;
@@ -14,21 +13,11 @@ public class DummyObjectProvider {
     public static final String DUMMY_ID = "00000000000";
     public static final String DUMMY_NAME = "Dummy Name";
 
-    public static Convention convention() {
-        return Convention.builder()
-                .description(DUMMY_CONVENTION)
-                .build();
-    }
-
-    public static ConventionSession conventionSession(Convention convention, Integer durationInMinutes) {
+    public static ConventionSession conventionSession(Integer durationInMinutes) {
         return ConventionSession.builder()
-                .convention(convention)
+                .description(DUMMY_CONVENTION)
                 .durationMinutes(durationInMinutes)
                 .build();
-    }
-
-    public static ConventionSession conventionSession(Integer durationInMinutes) {
-        return conventionSession(convention(), durationInMinutes);
     }
 
     public static Voter voter() {

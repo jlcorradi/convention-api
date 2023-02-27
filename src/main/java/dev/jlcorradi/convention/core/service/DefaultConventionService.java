@@ -33,7 +33,7 @@ public class DefaultConventionService implements ConventionSessionService {
     @Override
     public ConventionSession startSession(CreateConventionSessionDTO createConventionSessionDTO) {
         ConventionSession conventionSession = ConventionSession.builder()
-                .convention(createConventionSessionDTO.getConvention())
+                .description(createConventionSessionDTO.getConvention())
                 .startDatetime(LocalDateTime.now())
                 .durationMinutes(createConventionSessionDTO.getDurationInMinutes())
                 .build();

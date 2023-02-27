@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
     <changeSet id="0" author="jlcorradi">
-        <createTable tableName="convention">
-            <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="description" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
 
         <createTable tableName="voter">
             <column name="id" type="VARCHAR(20)">
@@ -29,7 +21,7 @@
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="convention_id" type="BIGINT">
+            <column name="description" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="duration_minutes" type="INT" defaultValueNumeric="1"/>
@@ -40,11 +32,6 @@
             <column name="votes_pro" type="BIGINT"/>
             <column name="votes_con" type="BIGINT"/>
         </createTable>
-
-        <addForeignKeyConstraint baseTableName="convention_session" baseColumnNames="convention_id"
-                                 constraintName="fk_convention_session_convention"
-                                 referencedTableName="convention"
-                                 referencedColumnNames="id"/>
 
         <createTable tableName="vote_poll">
             <column name="id" type="BIGINT" autoIncrement="true">

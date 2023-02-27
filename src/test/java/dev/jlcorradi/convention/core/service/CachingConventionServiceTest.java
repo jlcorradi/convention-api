@@ -5,13 +5,10 @@ import dev.jlcorradi.convention.core.SessionClosedException;
 import dev.jlcorradi.convention.core.UnregisteredVoterException;
 import dev.jlcorradi.convention.core.dto.CreateConventionSessionDTO;
 import dev.jlcorradi.convention.core.dto.RegisterVoteDTO;
-import dev.jlcorradi.convention.core.model.Convention;
 import dev.jlcorradi.convention.core.model.ConventionSession;
 import dev.jlcorradi.convention.core.model.Voter;
-import dev.jlcorradi.convention.core.repository.ConventionRepository;
 import dev.jlcorradi.convention.core.repository.ConventionSessionRepository;
 import dev.jlcorradi.convention.core.repository.VoterRepository;
-import dev.jlcorradi.convention.utils.DummyObjectProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 
+import static dev.jlcorradi.convention.utils.DummyObjectProvider.DUMMY_CONVENTION;
 import static dev.jlcorradi.convention.utils.DummyObjectProvider.voter;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,9 +35,6 @@ class CachingConventionServiceTest {
     DefaultConventionService subject;
 
     DefaultConventionService spySubject;
-
-    @Autowired
-    ConventionRepository conventionRepository;
 
     @Autowired
     ConventionSessionRepository conventionSessionRepository;
@@ -58,12 +53,10 @@ class CachingConventionServiceTest {
     @Test
     void startSession_success() {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
         CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
-                .convention(convention)
+                .convention(DUMMY_CONVENTION)
                 .durationInMinutes(1)
                 .build();
-
         // WHEN
         ConventionSession conventionSession = subject.startSession(createConventionSessionDTO);
 
@@ -75,11 +68,11 @@ class CachingConventionServiceTest {
     @Test
     void closeSession_success() throws SessionClosedException {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
         CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
-                .convention(convention)
-                .durationInMinutes(60)
+                .convention(DUMMY_CONVENTION)
+                .durationInMinutes(1)
                 .build();
+
         ConventionSession conventionSession = subject.startSession(createConventionSessionDTO);
 
         // WHEN
@@ -92,9 +85,13 @@ class CachingConventionServiceTest {
     @Test
     void startupSessionsCheck_closesSessions() throws SessionClosedException {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
+        CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
+                .convention(DUMMY_CONVENTION)
+                .durationInMinutes(1)
+                .build();
+
         ConventionSession session = ConventionSession.builder()
-                .convention(convention)
+                .description(DUMMY_CONVENTION)
                 .durationMinutes(5)
                 .startDatetime(LocalDateTime.now().minusMinutes(10))
                 .build();
@@ -112,11 +109,12 @@ class CachingConventionServiceTest {
     void fullVotingSession_success() throws UnregisteredVoterException, SessionClosedException,
             InterruptedException, DuplicatedVoteException {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
-        ConventionSession session = spySubject.startSession(CreateConventionSessionDTO.builder()
-                .convention(convention)
+        CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
+                .convention(DUMMY_CONVENTION)
                 .durationInMinutes(1)
-                .build());
+                .build();
+
+        ConventionSession session = spySubject.startSession(createConventionSessionDTO);
         Voter voter = voterRepository.save(voter());
 
         votePollService.registerVote(RegisterVoteDTO.builder()
@@ -142,11 +140,12 @@ class CachingConventionServiceTest {
     @Test
     void voteAfterSessionClosed_throwsException() throws UnregisteredVoterException, InterruptedException, SessionClosedException {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
-        ConventionSession session = subject.startSession(CreateConventionSessionDTO.builder()
-                .convention(convention)
+        CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
+                .convention(DUMMY_CONVENTION)
                 .durationInMinutes(1)
-                .build());
+                .build();
+
+        ConventionSession session = subject.startSession(createConventionSessionDTO);
         Voter voter = voterRepository.save(voter());
 
         subject.closeSession(session);
@@ -163,11 +162,12 @@ class CachingConventionServiceTest {
     void duplicatedVote_throwException() throws UnregisteredVoterException,
             SessionClosedException, DuplicatedVoteException {
         // GIVEN
-        Convention convention = conventionRepository.save(DummyObjectProvider.convention());
-        ConventionSession session = subject.startSession(CreateConventionSessionDTO.builder()
-                .convention(convention)
+        CreateConventionSessionDTO createConventionSessionDTO = CreateConventionSessionDTO.builder()
+                .convention(DUMMY_CONVENTION)
                 .durationInMinutes(1)
-                .build());
+                .build();
+
+        ConventionSession session = subject.startSession(createConventionSessionDTO);
 
         Voter voter = voterRepository.save(voter());
         RegisterVoteDTO theVote = RegisterVoteDTO.builder()
