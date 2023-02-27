@@ -15,6 +15,9 @@ import java.util.Map;
 @Component
 public class ConventionSessionCache {
 
+    public static final String MSG_ADDING_CACHE = "Adding session #{} to cache.";
+    public static final String MSG_DESTROYING_CACHE = "Destroying session #{}.";
+
     private final ConventionSessionRepository conventionSessionRepository;
 
     private final Map<Long, ConventionSession> cacheObject = new HashMap<>();
@@ -26,7 +29,7 @@ public class ConventionSessionCache {
                     .filter(ConventionSession::isActive)
                     .orElseThrow(SessionClosedException::new);
 
-            log.trace("Adding session #{} to cache.", sessionId);
+            log.trace(MSG_ADDING_CACHE, sessionId);
             cacheObject.put(sessionId, activeSession);
         }
 
@@ -34,7 +37,7 @@ public class ConventionSessionCache {
     }
 
     public void destroySession(Long sessionId) {
-        log.trace("Destroying session #{}.", sessionId);
+        log.trace(MSG_DESTROYING_CACHE, sessionId);
         cacheObject.remove(sessionId);
     }
 

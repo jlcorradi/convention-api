@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-// TODO: make the env file work
 @Slf4j
 @SpringBootApplication
 @RequiredArgsConstructor

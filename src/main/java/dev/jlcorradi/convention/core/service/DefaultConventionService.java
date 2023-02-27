@@ -19,7 +19,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class CachingConvertionService implements ConventionSessionService {
+public class DefaultConventionService implements ConventionSessionService {
+
+    public static final String MSG_RESULTS_YES_NO = "Publishing poll #{} results: {} - yes, {} - No.";
+    public static final String MSG_SESSION_CLOSED_SUCCESSFULLY = "Session #{} closed successfully";
+    public static final String MSG_UNCLOSED_SESSIONS_FOUND = "${} unclosed sessions found.";
+    public static final String MSG_NO_UNCLOSED_SESSIONS_FOUND = "No unclosed sessions found.";
 
     private final ConventionSessionCache conventionSessionCache;
     private final ConventionSessionRepository conventionSessionRepository;
@@ -36,23 +41,25 @@ public class CachingConvertionService implements ConventionSessionService {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
         executor.schedule(() -> {
-            closeSession(conventionSession);
+            try {
+                closeSession(conventionSession);
+            } catch (SessionClosedException e) {
+                log.warn("The Session #{} had already been closed.", conventionSession.getId());
+            }
             executor.shutdown();
         }, conventionSession.getDurationMinutes(), TimeUnit.MINUTES);
-        return null;
+
+        return conventionSessionRepository.save(conventionSession);
     }
 
     @Override
-    public void closeSession(ConventionSession session) {
+    public ConventionSession closeSession(ConventionSession session) throws SessionClosedException {
         log.trace("Closing session #{}", session.getId());
-        ConventionSession activeSession = null;
-        try {
-            activeSession = conventionSessionCache.getActiveSession(session.getId());
-        } catch (SessionClosedException e) {
-            log.warn("Session has been closed by another thread.");
-        }
+        ConventionSession activeSession = conventionSessionRepository.findById(session.getId())
+                .orElseThrow(SessionClosedException::new);
 
-        // We are manipulating the actual cache object to ensure that no more votes are placed.
+        conventionSessionCache.destroySession(activeSession.getId());
+
         activeSession.setEndDatetime(LocalDateTime.now());
 
         // Summarizing votes to prevent overhead when reading poll results.
@@ -67,22 +74,24 @@ public class CachingConvertionService implements ConventionSessionService {
         conventionSessionCache.destroySession(session.getId());
 
         // TODO: Publish results to sqs
-        log.info("Publishing poll #{} results: {} - yes, {} - No.", session.getId(), session.getVotesPro(),
+        log.info(MSG_RESULTS_YES_NO, session.getId(), session.getVotesPro(),
                 session.getConvention());
-        log.info("Session #{} closed successfully", session.getId());
+        log.info(MSG_SESSION_CLOSED_SUCCESSFULLY, session.getId());
+
+        return activeSession;
     }
 
     /***
      * We check if there is any session that is supposed to be closed but are not due to system crash
      */
     @Override
-    public void startupSessionsCheck() {
+    public void startupSessionsCheck() throws SessionClosedException {
         log.trace("Executing Unclosed sessions Check.");
         List<ConventionSession> unclosedSessions = conventionSessionRepository.findAllByEndDatetimeNull();
         if (!unclosedSessions.isEmpty()) {
-            log.warn("${} unclosed sessions found.", unclosedSessions.size());
+            log.warn(MSG_UNCLOSED_SESSIONS_FOUND, unclosedSessions.size());
         } else {
-            log.info("No unclosed sessions found.");
+            log.info(MSG_NO_UNCLOSED_SESSIONS_FOUND);
         }
 
         for (ConventionSession session : unclosedSessions) {

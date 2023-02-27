@@ -7,7 +7,7 @@
 
     <changeSet id="0" author="jlcorradi">
         <createTable tableName="convention">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(255)">
@@ -26,7 +26,7 @@
         </createTable>
 
         <createTable tableName="convention_session">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="convention_id" type="BIGINT">
@@ -47,7 +47,7 @@
                                  referencedColumnNames="id"/>
 
         <createTable tableName="vote_poll">
-            <column name="id" type="BIGINT">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="convention_session_id" type="BIGINT">

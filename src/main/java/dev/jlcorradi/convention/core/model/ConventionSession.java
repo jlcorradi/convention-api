@@ -1,13 +1,17 @@
 package dev.jlcorradi.convention.core.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "convention_session")
@@ -41,6 +45,6 @@ public class ConventionSession {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
-        return this.startDatetime.plus(this.durationMinutes, ChronoUnit.MINUTES).isBefore(now);
+        return now.isBefore(this.startDatetime.plus(this.durationMinutes, ChronoUnit.MINUTES));
     }
 }
