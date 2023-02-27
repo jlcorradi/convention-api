@@ -69,14 +69,14 @@ public class DefaultConventionService implements ConventionSessionService {
         activeSession.setVotesPro(proCount);
         activeSession.setVotesCon(conCount);
 
-        conventionSessionRepository.save(activeSession);
+        activeSession = conventionSessionRepository.save(activeSession);
 
-        conventionSessionCache.destroySession(session.getId());
+        conventionSessionCache.destroySession(activeSession.getId());
 
         // TODO: Publish results to sqs
-        log.info(MSG_RESULTS_YES_NO, session.getId(), session.getVotesPro(),
-                session.getConvention());
-        log.info(MSG_SESSION_CLOSED_SUCCESSFULLY, session.getId());
+        log.info(MSG_RESULTS_YES_NO, activeSession.getId(), activeSession.getVotesPro(),
+                activeSession.getVotesCon());
+        log.info(MSG_SESSION_CLOSED_SUCCESSFULLY, activeSession.getId());
 
         return activeSession;
     }
