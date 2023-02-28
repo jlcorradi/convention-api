@@ -23,9 +23,9 @@ public class DefaultVotePollService implements VotePollService {
     private final VoterRepository voterRepository;
 
     @Override
-    public void registerVote(RegisterVoteDTO registerVoteDTO) throws UnregisteredVoterException, SessionClosedException,
+    public void registerVote(Long conventionSessionId, RegisterVoteDTO registerVoteDTO) throws UnregisteredVoterException, SessionClosedException,
             DuplicatedVoteException {
-        ConventionSession activeSession = conventionSessionCache.getActiveSession(registerVoteDTO.getConventionSessionId());
+        ConventionSession activeSession = conventionSessionCache.getActiveSession(conventionSessionId);
 
         Voter voter = voterRepository.findById(registerVoteDTO.getVoterId())
                 .orElseThrow(UnregisteredVoterException::new);

@@ -6,5 +6,6 @@ import dev.jlcorradi.convention.core.UnregisteredVoterException;
 import dev.jlcorradi.convention.core.dto.RegisterVoteDTO;
 
 public interface VotePollService {
-    void registerVote(RegisterVoteDTO registerVoteDTO) throws UnregisteredVoterException, SessionClosedException, DuplicatedVoteException;
+    void registerVote(Long conventionSessionId, RegisterVoteDTO registerVoteDTO)
+            throws UnregisteredVoterException, SessionClosedException, DuplicatedVoteException;
 }

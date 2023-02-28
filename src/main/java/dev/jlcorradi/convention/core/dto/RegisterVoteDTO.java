@@ -14,9 +14,6 @@ public class RegisterVoteDTO {
     @NotEmpty(message = "Voter ID is required")
     private String voterId;
 
-    @NotEmpty(message = "Convention ID is required")
-    private Long conventionSessionId;
-
     @NotEmpty(message = "Vote is required")
     private Boolean vote;
 }

@@ -2,6 +2,7 @@ package dev.jlcorradi.convention.core.service;
 
 import dev.jlcorradi.convention.core.SessionClosedException;
 import dev.jlcorradi.convention.core.dto.CreateConventionSessionDTO;
+import dev.jlcorradi.convention.core.dto.CreateConventionSessionResponseDTO;
 import dev.jlcorradi.convention.core.model.ConventionSession;
 import dev.jlcorradi.convention.core.model.VotePoll;
 import dev.jlcorradi.convention.core.repository.ConventionSessionRepository;
@@ -31,7 +32,7 @@ public class DefaultConventionService implements ConventionSessionService {
     private final VotePollRepository votePollRepository;
 
     @Override
-    public ConventionSession startSession(CreateConventionSessionDTO createConventionSessionDTO) {
+    public CreateConventionSessionResponseDTO startSession(CreateConventionSessionDTO createConventionSessionDTO) {
         ConventionSession conventionSession = ConventionSession.builder()
                 .description(createConventionSessionDTO.getConvention())
                 .startDatetime(LocalDateTime.now())
@@ -49,14 +50,18 @@ public class DefaultConventionService implements ConventionSessionService {
             executor.shutdown();
         }, conventionSession.getDurationMinutes(), TimeUnit.MINUTES);
 
-        return conventionSessionRepository.save(conventionSession);
+        ConventionSession session = conventionSessionRepository.save(conventionSession);
+        return CreateConventionSessionResponseDTO.builder()
+                .id(session.getId())
+                .startedDateTime(session.getStartDatetime())
+                .build();
     }
 
     @Override
     public ConventionSession closeSession(ConventionSession session) throws SessionClosedException {
         log.trace("Closing session #{}", session.getId());
         ConventionSession activeSession = conventionSessionRepository.findById(session.getId())
-                .orElseThrow(SessionClosedException::new);
+                .orElseThrow(() -> new SessionClosedException(session.getId()));
 
         conventionSessionCache.destroySession(activeSession.getId());
 

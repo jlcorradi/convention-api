@@ -31,7 +31,7 @@ public class ConventionSessionCache {
         if (null == activeSession) {
             activeSession = conventionSessionRepository.findById(sessionId)
                     .filter(ConventionSession::isActive)
-                    .orElseThrow(SessionClosedException::new);
+                    .orElseThrow(() -> new SessionClosedException(sessionId));
 
             log.trace(MSG_ADDING_CACHE, sessionId);
             cacheObject.put(sessionId, activeSession);

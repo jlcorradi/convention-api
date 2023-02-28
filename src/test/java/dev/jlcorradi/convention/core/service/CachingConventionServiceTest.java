@@ -4,6 +4,7 @@ import dev.jlcorradi.convention.core.DuplicatedVoteException;
 import dev.jlcorradi.convention.core.SessionClosedException;
 import dev.jlcorradi.convention.core.UnregisteredVoterException;
 import dev.jlcorradi.convention.core.dto.CreateConventionSessionDTO;
+import dev.jlcorradi.convention.core.dto.CreateConventionSessionResponseDTO;
 import dev.jlcorradi.convention.core.dto.RegisterVoteDTO;
 import dev.jlcorradi.convention.core.model.ConventionSession;
 import dev.jlcorradi.convention.core.model.Voter;
@@ -58,10 +59,10 @@ class CachingConventionServiceTest {
                 .durationInMinutes(1)
                 .build();
         // WHEN
-        ConventionSession conventionSession = subject.startSession(createConventionSessionDTO);
+        ConventionSession session = createSession(subject, createConventionSessionDTO);
 
         // THEN
-        Assertions.assertTrue(conventionSession.isActive());
+        Assertions.assertTrue(session.isActive());
 
     }
 
@@ -73,7 +74,7 @@ class CachingConventionServiceTest {
                 .durationInMinutes(1)
                 .build();
 
-        ConventionSession conventionSession = subject.startSession(createConventionSessionDTO);
+        ConventionSession conventionSession = createSession(subject, createConventionSessionDTO);
 
         // WHEN
         ConventionSession closedSession = subject.closeSession(conventionSession);
@@ -114,11 +115,10 @@ class CachingConventionServiceTest {
                 .durationInMinutes(1)
                 .build();
 
-        ConventionSession session = spySubject.startSession(createConventionSessionDTO);
+        ConventionSession session = createSession(spySubject, createConventionSessionDTO);
         Voter voter = voterRepository.save(voter());
 
-        votePollService.registerVote(RegisterVoteDTO.builder()
-                .conventionSessionId(session.getId())
+        votePollService.registerVote(session.getId(), RegisterVoteDTO.builder()
                 .voterId(voter.getId())
                 .vote(true)
                 .build());
@@ -145,16 +145,17 @@ class CachingConventionServiceTest {
                 .durationInMinutes(1)
                 .build();
 
-        ConventionSession session = subject.startSession(createConventionSessionDTO);
+        ConventionSession session = createSession(subject, createConventionSessionDTO);
         Voter voter = voterRepository.save(voter());
 
         subject.closeSession(session);
 
-        assertThrows(SessionClosedException.class, () -> votePollService.registerVote(RegisterVoteDTO.builder()
-                .conventionSessionId(session.getId())
-                .voterId(voter.getId())
-                .vote(true)
-                .build()));
+        assertThrows(SessionClosedException.class, () -> votePollService.registerVote(
+                session.getId(), RegisterVoteDTO.builder()
+                        .voterId(voter.getId())
+                        .vote(true)
+                        .build())
+        );
 
     }
 
@@ -167,18 +168,17 @@ class CachingConventionServiceTest {
                 .durationInMinutes(1)
                 .build();
 
-        ConventionSession session = subject.startSession(createConventionSessionDTO);
+        ConventionSession session = createSession(subject, createConventionSessionDTO);
 
         Voter voter = voterRepository.save(voter());
         RegisterVoteDTO theVote = RegisterVoteDTO.builder()
-                .conventionSessionId(session.getId())
                 .voterId(voter.getId())
                 .vote(true)
                 .build();
 
-        votePollService.registerVote(theVote);
+        votePollService.registerVote(session.getId(), theVote);
 
-        assertThrows(DuplicatedVoteException.class, () -> votePollService.registerVote(theVote));
+        assertThrows(DuplicatedVoteException.class, () -> votePollService.registerVote(session.getId(), theVote));
 
         subject.closeSession(session);
 
@@ -188,5 +188,12 @@ class CachingConventionServiceTest {
         assertEquals(1, closedSession.getVotesPro());
         assertEquals(0, closedSession.getVotesCon());
 
+    }
+
+    private ConventionSession createSession(ConventionSessionService service,
+                                            CreateConventionSessionDTO createConventionSessionDTO) {
+        CreateConventionSessionResponseDTO createConventionSessionResponseDTO = service.startSession(createConventionSessionDTO);
+        return conventionSessionRepository.findById(createConventionSessionResponseDTO.getId())
+                .orElse(null);
     }
 }
