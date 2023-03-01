@@ -71,9 +71,9 @@ Content-Type: application/json
 ### Registering a vote
 POST http://localhost:8080/api/v1/convention-session/6/vote
 Content-Type: application/json
+voterId: 12345678901
 
 {
-  "voterId": "12345678901",
   "vote": false
 }
 
