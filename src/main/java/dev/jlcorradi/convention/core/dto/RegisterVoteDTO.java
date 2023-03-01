@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterVoteDTO {
-    @NotEmpty(message = "Voter ID is required")
-    private String voterId;
-
     @NotEmpty(message = "Vote is required")
     private Boolean vote;
 }

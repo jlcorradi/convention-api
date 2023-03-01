@@ -118,10 +118,11 @@ class CachingConventionServiceTest {
         ConventionSession session = createSession(spySubject, createConventionSessionDTO);
         Voter voter = voterRepository.save(voter());
 
-        votePollService.registerVote(session.getId(), RegisterVoteDTO.builder()
-                .voterId(voter.getId())
-                .vote(true)
-                .build());
+        votePollService.registerVote(session.getId(), voter.getId(),
+                RegisterVoteDTO.builder()
+                        .vote(true)
+                        .build()
+        );
 
         // WHEN
         log.info("Waiting for the session to end...");
@@ -151,8 +152,7 @@ class CachingConventionServiceTest {
         subject.closeSession(session);
 
         assertThrows(SessionClosedException.class, () -> votePollService.registerVote(
-                session.getId(), RegisterVoteDTO.builder()
-                        .voterId(voter.getId())
+                session.getId(), voter.getId(), RegisterVoteDTO.builder()
                         .vote(true)
                         .build())
         );
@@ -172,13 +172,13 @@ class CachingConventionServiceTest {
 
         Voter voter = voterRepository.save(voter());
         RegisterVoteDTO theVote = RegisterVoteDTO.builder()
-                .voterId(voter.getId())
                 .vote(true)
                 .build();
 
-        votePollService.registerVote(session.getId(), theVote);
+        votePollService.registerVote(session.getId(), voter.getId(), theVote);
 
-        assertThrows(DuplicatedVoteException.class, () -> votePollService.registerVote(session.getId(), theVote));
+        assertThrows(DuplicatedVoteException.class,
+                () -> votePollService.registerVote(session.getId(), voter.getId(), theVote));
 
         subject.closeSession(session);
 

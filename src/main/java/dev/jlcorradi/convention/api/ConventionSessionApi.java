@@ -43,9 +43,10 @@ public class ConventionSessionApi {
 
     @PostMapping("/{id}/vote")
     @ResponseStatus(HttpStatus.OK)
-    public void registerVote(@PathVariable("id") Long sessionId, @RequestBody RegisterVoteDTO registerVoteDTO)
+    public void registerVote(@PathVariable("id") Long sessionId, @RequestHeader("voterId") String voterId,
+                             @RequestBody RegisterVoteDTO registerVoteDTO)
             throws DuplicatedVoteException, UnregisteredVoterException, SessionClosedException {
-        votePollService.registerVote(sessionId, registerVoteDTO);
+        votePollService.registerVote(sessionId, voterId, registerVoteDTO);
     }
 
 }
