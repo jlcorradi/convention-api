@@ -29,7 +29,7 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException ex) {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("errors", new String[]{ex.getMessage()}));
     }
 }

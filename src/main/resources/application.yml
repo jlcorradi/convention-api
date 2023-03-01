@@ -10,3 +10,6 @@ spring:
     show-sql: ${SPRING_JPA_SHOW_SQL}
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
+
+  springdoc.swagger-ui.title: Java Developer Evaluation - Jorge Corradi
+
