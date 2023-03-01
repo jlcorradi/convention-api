@@ -65,7 +65,7 @@ Content-Type: application/json
 
 ```
 
-## Considerações Finais~~~~
+## Considerações Finais
 
 Esta aplicação foi desenvolvida como parte de um processo de avaliação para uma vaga de desenvolvedor para uma empresa
 brasileira que não será divulgada neste repositório. Em caso de dúvidas ou sugestões, por favor entre em contato com a
