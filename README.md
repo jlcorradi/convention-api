@@ -1,4 +1,18 @@
-## Executando a Aplicação
+## Pré requisitos
+Para executar a aplicação via docker:
+- Docker
+- Docker compose
+
+Para executar a aplicação manualmente:
+- java 17
+- Maven a partir da versão 3.5
+- Docker para executar Mysql como container.
+
+## Executando a aplicação via docker
+- Conceda permissão de execussão para run-local.sh: `chmod a+x run-local.sh`
+- Execute o comando `./run-local.sh`. Você pode conectar o Remote Debugging da sua IDE favorita através da porta 5005.
+
+## Executando a Aplicação manualmente
 
 Para executar a aplicação, você precisa seguir os seguintes passos:
 
